@@ -1,0 +1,62 @@
+# =================================================================
+# Archivos generados por LaTeX
+# =================================================================
+
+# Archivos auxiliares principales
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.brf
+
+# Archivos de bibliografía (BibTeX/Biber)
+*.bcf
+*.run.xml
+
+# Archivos de índices (MakeIndex)
+*.idx
+*.ind
+*.ilg
+
+# Archivos del paquete 'glossaries'
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+
+# Archivos de compilación (PDF y otros formatos)
+*.pdf
+*.dvi
+*.ps
+*.synctex.gz
+
+# Archivos de respaldo de LaTeX y borradores
+*.bak
+*.fls
+*.fdb_latexmk
+*.snm
+*.nav
+
+# =================================================================
+# Archivos de Sistema Operativo y Editores
+# =================================================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Vim
+*~
+*.swp
+*.swo
