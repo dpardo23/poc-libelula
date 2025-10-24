@@ -1,0 +1,63 @@
+% Este archivo contiene toda la configuración, paquetes y estilos.
+
+% Opciones de documento y idioma
+\documentclass[letterpaper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+
+% Paquetes de formato y tipografía
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{microtype} 
+
+% Paquetes para código y colores
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Paquetes para navegación y cabeceras
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+% Configuración de Geometría y Márgenes
+\geometry{margin=2.5cm, top=3.5cm}
+
+% Configuración de Cabeceras y Pies de Página (FancyHdr)
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Ingeniería de Software}
+\fancyhead[R]{PoC Pasarela Libélula}
+\fancyfoot[C]{\thepage}
+
+
+% Estilo para 'listings' (código)
+\lstdefinestyle{consola}{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{gray!5},
+  frame=single,
+  rulecolor=\color{gray!50},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  captionpos=b,
+  xleftmargin=1em, xrightmargin=1em,
+  aboveskip=1em, belowskip=1em,
+}
+
+% Configuración de Hyperref (para metadatos del PDF)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={PoC Integración Pasarela Libélula},
+    pdfauthor={Diego Pardo},
+    pdfsubject={Análisis de Viabilidad Técnica},
+    pdfkeywords={Bolivia, Libelula, PagosNet, PoC, LaTeX},
+    bookmarksopen=true 
+}

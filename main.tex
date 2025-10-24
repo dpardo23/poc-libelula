@@ -1,0 +1,44 @@
+% =================================================================
+% ARCHIVO MAESTRO (main.tex)
+% PoC: Integración Pasarela Libélula
+% Autor: Diego Pardo
+%
+% Este archivo NO contiene contenido, solo la estructura
+% y las llamadas a los archivos de configuración y secciones.
+% =================================================================
+
+% 1. Cargar configuración, paquetes y estilos
+\input{preamble.tex}
+
+% 2. Iniciar el documento
+\begin{document}
+
+% 3. Incluir la Portada (Viene de sections/00_Portada.tex)
+\input{sections/00_Portada.tex}
+
+% 4. Incluir Tabla de Contenido se genera en una página nueva y sin cabecera
+\newpage
+\thispagestyle{empty}
+\vspace*{1.0cm} % Espacio superior
+\tableofcontents
+\newpage
+
+% 5. Incluir Secciones de Contenido reseteamos el contador de página y aplicamos el estilo
+\pagestyle{fancy}
+\setcounter{page}{1}
+
+% Estructura de secciones detallada:
+\input{sections/01_Introduccion.tex}
+\input{sections/02_Vision_General_Libelula.tex}
+\input{sections/03_Analisis_Recursos_Dev.tex}
+\input{sections/04_Metodos_Pago.tex}
+\input{sections/05_Proceso_Integracion.tex}
+\input{sections/06_Consideraciones_Seguridad.tex}
+\input{sections/07_Analisis_Soporte_Costos.tex}
+\input{sections/08_Conclusiones.tex}
+
+% 6. (Opcional) Apéndices y Bibliografía
+% \input{sections/09_Apendices.tex}
+% \bibliography{resources/bib/referencias}
+% \bibliographystyle{plain}
+\end{document}
