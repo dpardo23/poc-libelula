@@ -1,78 +1,58 @@
 \section{Introducción}
-    El ecosistema de comercio electrónico y servicios digitales en Bolivia enfrenta un desafío particular: la limitada disponibilidad 
-    de pasarelas de pago internacionales robustas que se adapten plenamente al sistema financiero y a los hábitos de consumo locales. 
-    Esta brecha crea una necesidad crítica para las empresas de adoptar soluciones de pago nacionales que ofrezcan una integración 
-    fluida y acceso a los métodos de pago preferidos por el consumidor boliviano.[cite_start]En este contexto, \textbf{Libélula}, 
-    una plataforma de pagos online perteneciente al grupo Todotix SRL[cite: 15], emerge como una solución estratégica. [cite_start]La 
-    plataforma está diseñada para que las empresas puedan cobrar cuentas pendientes a sus clientes finales a través de múltiples 
-    canales de pago [cite: 13, 14][cite_start], incluyendo los de mayor penetración en el mercado como \textbf{SimpleQR} (vía BCP) 
-    [cite: 18][cite_start], \textbf{Tigo Money} [cite: 20][cite_start], tarjetas de débito/crédito (a través de Cybersource) 
-    [cite: 17] [cite_start]y botones de pago bancarios como BNBNet [cite: 21] [cite_start]y BCP[cite: 19].\par
+    El ecosistema de comercio electrónico y servicios digitales en Bolivia enfrenta un desafío particular: la limitada 
+    disponibilidad de pasarelas de pago internacionales robustas (como Stripe o PayPal) que se adapten plenamente al sistema 
+    financiero y a los hábitos de consumo locales. Esta brecha crea una necesidad crítica para las empresas de adoptar soluciones 
+    de pago nacionales que ofrezcan una integración fluida y acceso a los métodos de pago preferidos por el consumidor boliviano.\par
 
-    Este documento constituye una \textbf{Prueba de Concepto (PoC)} técnica, cuyo objetivo es analizar la viabilidad de integrar la 
-    pasarela Libélula dentro de nuestro proyecto de software.\par
+    En este contexto, \textbf{Libélula}, una plataforma de pagos online perteneciente al grupo Todotix SRL, emerge como una solución 
+    estratégica. La plataforma está diseñada para que las empresas puedan cobrar cuentas pendientes a sus clientes finales a través 
+    de múltiples canales de pago, incluyendo los de mayor penetración en el mercado como \textbf{SimpleQR} (vía BCP), \textbf{Tigo Money}, 
+    tarjetas de débito/crédito (a través de Cybersource) y botones de pago bancarios como BNBNet y BCP.\par
+
+    Este documento constituye una \textbf{Prueba de Concepto (PoC)} técnica, cuyo objetivo es analizar la viabilidad de 
+    integrar la pasarela Libélula dentro de nuestro proyecto de software.\par
 
     \subsection{Propósito y Objetivos del Documento}
-        [cite_start]El propósito principal de este informe es evaluar, desde una perspectiva técnica, la API de Libélula (basada 
-        en el "Manual de Integración v2.7.1" [cite: 4]) para determinar la factibilidad, el esfuerzo y los riesgos asociados a su 
-        implementación en un sprint de desarrollo.\par
+        El propósito principal de este informe es evaluar, desde una perspectiva técnica, la API de Libélula (basada en el 
+        "Manual de Integración v2.7.1") para determinar la factibilidad, el esfuerzo y los riesgos asociados a su implementación 
+        en un sprint de desarrollo.\par
 
         Los objetivos específicos de esta Prueba de Concepto son:
-            \begin{itemize}
-                [cite_start]\item Analizar en detalle la arquitectura y el paradigma de la API de Libélula, centrada en el concepto 
-                de \texttt{REGISTRAR DEUDA}[cite: 27].
-                \item Definir un flujo de integración técnico completo, identificando los componentes de \emph{backend} y 
-                \emph{frontend} necesarios en nuestra arquitectura actual.
-                [cite_start]\item Identificar los \emph{endpoints} críticos para el flujo de pago, incluyendo el registro de 
-                la transacción [cite: 32][cite_start], la gestión de la respuesta de la pasarela [cite: 154] [cite_start]y el 
-                manejo del \emph{callback} de confirmación (\texttt{PAGO EXITOSO})[cite: 255].
-                [cite_start]\item Evaluar la calidad y claridad de la documentación técnica [cite: 2] proporcionada para estimar 
-                posibles riesgos durante el desarrollo.
-                \item Proveer una recomendación fundamentada al equipo de producto e ingeniería sobre la viabilidad de proceder 
-                con la integración.
-            \end{itemize}
+        \begin{itemize}
+            \item Analizar en detalle la arquitectura y el paradigma de la API de Libélula, centrada en el concepto de \texttt{REGISTRAR DEUDA}.
+            \item Definir un flujo de integración técnico completo, identificando los componentes de \emph{backend} y \emph{frontend} necesarios en nuestra arquitectura actual.
+            \item Identificar los \emph{endpoints} críticos para el flujo de pago, incluyendo el registro de la transacción, la gestión de la respuesta de la pasarela y el manejo del \emph{callback} de confirmación (\texttt{PAGO EXITOSO}).
+            \item Evaluar la calidad y claridad de la documentación técnica proporcionada para estimar posibles riesgos durante el desarrollo.
+            \item Proveer una recomendación fundamentada al equipo de producto e ingeniería sobre la viabilidad de proceder con la integración.
+        \end{itemize}
 
     \subsection{Alcance de la Investigación (Fase 1 del PoC)}
-    Para mantener esta investigación acotada y centrada en los objetivos del sprint, el alcance de este PoC se define de la 
-    siguiente manera:
+        Para mantener esta investigación acotada y centrada en los objetivos del sprint, el alcance de este PoC se define de la 
+        siguiente manera:
 
         \subsubsection*{Dentro del Alcance}
-        \begin{itemize}
-            [cite_start]\item Análisis exclusivo del Manual de Integración v2.7.1 (septiembre 2020)[cite: 4].
-            [cite_start]\item Estudio del flujo de pago principal: \texttt{REGISTRAR DEUDA} [cite: 27][cite_start], 
-            redirección del cliente [cite: 152] [cite_start]y recepción del \emph{callback} \texttt{PAGO EXITOSO}[cite: 255].
-            [cite_start]\item Análisis de los métodos de pago considerados estratégicos: QR Simple [cite: 18, 156] [cite_start]y 
-            Tarjetas de Crédito/Débito[cite: 17].
-            [cite_start]\item Revisión del mecanismo de conciliación de pagos mediante el \emph{endpoint} 
-            \texttt{CONSULTAR PAGOS}[cite: 305].
-            [cite_start]\item Identificación de la arquitectura de los entornos de \texttt{Testing} [cite: 35] [cite_start]y 
-            \texttt{Producción}[cite: 34].
-        \end{itemize}
+            \begin{itemize}
+                \item Análisis exclusivo del Manual de Integración v2.7.1 (septiembre 2020).
+                \item Estudio del flujo de pago principal: \texttt{REGISTRAR DEUDA}, redirección del cliente y recepción del \emph{callback} \texttt{PAGO EXITOSO}.
+                \item Análisis de los métodos de pago considerados estratégicos: QR Simple y Tarjetas de Crédito/Débito.
+                \item Revisión del mecanismo de conciliación de pagos mediante el \emph{endpoint} \texttt{CONSULTAR PAGOS}.
+                \item Identificación de la arquitectura de los entornos de \texttt{Testing} y \texttt{Producción}.
+            \end{itemize}
 
         \subsubsection*{Fuera del Alcance}
-        \begin{itemize}
-            \item No se realizará un análisis de costos, comisiones o términos legales del contrato con Todotix SRL. Este PoC es 
-            puramente técnico.
-            [cite_start]\item No se analizarán flujos de pago secundarios como "Pagos en Caja"[cite: 250], ya que no aplican a 
-            nuestro modelo de negocio digital.
-            [cite_start]\item No se implementará la lógica para casos de uso complejos, como la emisión de múltiples facturas 
-            (\texttt{factura\_id\_grupo})[cite: 163], que se considerarán mejoras a futuro.
-        \end{itemize}
+            \begin{itemize}
+                \item No se realizará un análisis de costos, comisiones o términos legales del contrato con Todotix SRL. Este PoC es puramente técnico.
+                \item No se analizarán flujos de pago secundarios como "Pagos en Caja", ya que no aplican a nuestro modelo de negocio digital.
+                \item No se implementará la lógica para casos de uso complejos, como la emisión de múltiples facturas (\texttt{factura\_id\_grupo}), que se considerarán mejoras a futuro.
+            \end{itemize}
 
-        \subsection{Metodología de la Investigación}
+    \subsection{Metodología de la Investigación}
         La evaluación técnica se llevó a cabo siguiendo un proceso estructurado en cuatro fases:
         \begin{enumerate}
-            [cite_start]\item \textbf{Revisión Documental:} Análisis exhaustivo del "Manual de Integración v2.7.2Z01.pdf" 
-            para extraer la arquitectura de la API, los modelos de datos y los flujos de comunicación[cite: 2].
-            [cite_start]\item \textbf{Análisis de Endpoints:} Desglose de los tres servicios web principales: 
-            \texttt{/rest/deuda/registrar} [cite: 32][cite_start], el \emph{callback} \texttt{PAGO EXITOSO} [cite: 258] [cite_start]y 
-            \texttt{/rest/deuda/consultar\_pagos}[cite: 310].
-            [cite_start]\item \textbf{Diseño de Arquitectura:} Definición de una arquitectura de integración conceptual 
-            (Frontend/Backend) que se alinea con las mejores prácticas de seguridad (ocultación de \texttt{appkey} [cite: 41]) y 
-            fiabilidad (manejo de \emph{webhooks}).
-            [cite_start]\item \textbf{Desarrollo de Demo (Prueba de Campo):} Implementación de \emph{scripts} y componentes de 
-            \emph{frontend/backend} (documentados en la carpeta \texttt{resources/code/}) para validar el flujo de pago contra el 
-            entorno de \texttt{Testing} de Libélula (\texttt{http://www.todotix.com:10888})[cite: 35].
+            \item \textbf{Revisión Documental:} Análisis exhaustivo del "Manual de Integración v2.7.2Z01.pdf" para extraer la arquitectura de la API, los modelos de datos y los flujos de comunicación.
+            \item \textbf{Análisis de Endpoints:} Desglose de los tres servicios web principales: \texttt{/rest/deuda/registrar}, el \emph{callback} \texttt{PAGO EXITOSO} y \texttt{/rest/deuda/consultar\_pagos}.
+            \item \textbf{Diseño de Arquitectura:} Definición de una arquitectura de integración conceptual (Frontend/Backend) que se alinea con las mejores prácticas de seguridad (ocultación de \texttt{appkey}) y fiabilidad (manejo de \emph{webhooks}).
+            \item \textbf{Desarrollo de Demo (Prueba de Campo):} Implementación de \emph{scripts} y componentes de \emph{frontend/backend} (documentados en la carpeta \texttt{resources/code/}) para validar el flujo de pago contra el entorno de \texttt{Testing} de Libélula (\texttt{http://www.todotix.com:10888}).
         \end{enumerate}
 
 
@@ -80,6 +60,6 @@
     Este documento está dirigido principalmente al equipo de ingeniería (\emph{Frontend} y \emph{Backend} developers), 
     \emph{Tech Leads} y al \emph{Product Owner} (PO) del proyecto.
 
-Se asume que el lector posee conocimientos técnicos sobre arquitecturas de software, APIs RESTful, flujos de pago online 
-(como redirecciones y \emph{webhooks}), y está familiarizado con la pila tecnológica de nuestro proyecto. El informe servirá 
-como base para la creación de historias de usuario técnicas y la estimación de esfuerzo en la planificación del sprint.
+Se asume que el lector posee conocimientos técnicos sobre arquitecturas de software, APIs RESTful, flujos de pago online (como 
+redirecciones y \emph{webhooks}), y está familiarizado con la pila tecnológica de nuestro proyecto. El informe servirá como 
+base para la creación de historias de usuario técnicas y la estimación de esfuerzo en la planificación del sprint.\par
