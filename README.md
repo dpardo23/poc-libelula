@@ -1,51 +1,67 @@
 # poc-libelula
 
-![Logotipo de Libelula](./resources/images/libelula/LogoPagosTT.png)
+<div style="text-align:center">
+  <img src="./resources/images/Libelula/LogoPagosTT.png" alt="Logotipo de Libelula" width="400"/>
+</div>
 
 # Prueba de Concepto (PoC): Integración de Pasarela de Pagos Libélula (PagosNet)
 Este repositorio contiene el documento LaTeX para una Prueba de Concepto (PoC) que analiza la viabilidad de integrar la pasarela de pagos boliviana "Libélula" (de PagosNet) en nuestro proyecto de software.
 
-El objetivo de este documento es evaluar técnicamente la API de Libélula, proponer una arquitectura de integración y estimar el esfuerzo requerido para su implementación en un próximo sprint.
+El objetivo de este documento es evaluar técnicamente la API de Libélula (basado en su Manual de Integración), proponer una arquitectura de integración y documentar los hallazgos para un próximo sprint.
 
 ## Estructura del Proyecto
 El proyecto está organizado siguiendo las mejores prácticas de LaTeX para mantener el contenido, la configuración y los recursos separados y ordenados.
 
-```
-PoC_Libelula_Integration/
-├── main.tex                              # El archivo maestro que une todo el documento
-├── preamble.tex                          # Configuración: paquetes, metadatos, comandos
-├── Makefile                              # (Opcional) Para compilar fácil (ej. 'make pdf')
-├── .gitignore                            # Para ignorar archivos auxiliares de LaTeX (aux, log)
+```bash
+POC-LIBELULA/
+├── main.tex                 # El archivo maestro que une todo el documento
+├── preamble.tex             # Configuración: paquetes, metadatos, comandos
+├── Makefile                 # Para compilar fácil (ej. 'make pdf')
+├── .gitignore               # Para ignorar archivos auxiliares de LaTeX y de SO
 |
-├── sections/                             # "Carpetas para cada título" (el contenido)
-│   ├── 00_Resumen_Ejecutivo.tex
-│   ├── 01_Introduccion.tex               # El problema: necesidad de una pasarela en Bolivia
-│   ├── 02_Contexto_Mercado.tex           # Por qué otras (Stripe, etc.) no son viables
-│   ├── 03_Analisis_Libelula.tex          # Qué es, quién es PagosNet, servicios
-│   ├── 04_Arquitectura_API.tex           # El "core" del PoC: Endpoints, Auth, Flujo de Pago
-│   ├── 05_Propuesta_Integracion.tex      # Cómo se integraría en *nuestro* proyecto
-│   ├── 06_Prueba_Concepto.tex            # Resultados del "código" (si se hizo un script)
-│   ├── 07_Analisis_Viabilidad.tex        # Estimación, riesgos, esfuerzo (para el Sprint)
-│   ├── 08_Conclusion_Recomendacion.tex
-│   └── 09_Apendices.tex
+├── sections/                # El contenido principal del documento
+│   ├── 00_Portada.tex
+│   ├── 01_Introduccion.tex
+│   ├── 02_Vision_General_Libelula.tex
+│   ├── 03_Analisis_Recursos_Dev.tex
+│   ├── 04_Metodos_Pago.tex
+│   ├── 05_Proceso_Integracion.tex
+│   ├── 06_Consideraciones_Seguridad.tex
+│   ├── 07_Analisis_Soporte_Costos.tex
+│   └── 08_Conclusiones.tex
 |
-├── resources/                            # Recursos externos al texto
-│   ├── images/                           # Diagramas, screenshots
-│   │   ├── logo_empresa.png
-│   │   ├── logo_libelula.png
-│   │   ├── flujo_pago_qr.png             # Diagrama de secuencia (MUY importante)
-│   │   └── arquitectura_integracion.png
+├── resources/               # Recursos externos al texto
+│   ├── bibliography/        # PDFs de referencia y manuales de integración
+│   │   ├── Manuales de Integracion/
+│   │   │   └── Libelula-Manual-de-Integracion-v2.7.2Z01.pdf
+│   │   └── referencias.bib  # Archivo BibTeX para citas
 │   │
-│   ├── code/                             # Snippets de código que se importan al .tex
-│   │   ├── ejemplo_request_token.json
-│   │   ├── ejemplo_request_pago.js
-│   │   └── ejemplo_webhook_php.php
+│   ├── code/                # Código fuente de la demo (Backend y Frontend)
+│   │   ├── Backend/
+│   │   │   ├── CardController.ts
+│   │   │   └── ... (más archivos .ts del servidor)
+│   │   └── Frontend/
+│   │       ├── page.tsx
+│   │       ├── globals.css
+│   │       └── ... (más archivos de Next.js/React)
 │   │
-│   └── bib/                              # Bibliografía
-│       └── referencias.bib               # Enlaces a la documentación oficial de PagosNet, etc.
+│   └── images/              # Recursos visuales del PoC
+│       ├── Libelula/
+│       │   └── LogoPagosTT.png
+│       ├── Logos/
+│       │   └── logoUMSS.png
+│       ├── Mockups/
+│       │   ├── Formulario.png
+│       │   └── ... (más mockups de Figma)
+│       └── Pruebas/
+│           ├── Metodo de pago qr.png
+│           └── ... (más capturas de la demo)
 │
-└── README.md                             # Instrucciones para compilar el PoC
+├── build/                   # (IGNORADO) Carpeta de salida para el PDF
+└── README.md                # Instrucciones para compilar el PoC
 ```
+
+
 
 ## Descripción de Archivos y Directorios
 
@@ -63,54 +79,69 @@ PoC_Libelula_Integration/
 
 #### `sections/`
 
-Este es el directorio principal del contenido. Cada archivo `.tex` representa un capítulo o sección del PoC. Están numerados para asegurar un orden lógico de inclusión en `main.tex`.
+Este es el directorio principal del contenido. Cada archivo .tex representa un capítulo o sección numerada del PoC, desde la `00_Portada.tex` hasta la `08_Conclusiones.tex`.
 
-* **`00_Resumen_Ejecutivo.tex`**: Un resumen de alto nivel del PoC, sus hallazgos y recomendaciones (para stakeholders).
-* **`01_Introduccion.tex`**: Define el problema a resolver (la falta de pasarelas viables en Bolivia) y el objetivo de este PoC.
-* **`02_Contexto_Mercado.tex`**: Breve análisis de por qué otras pasarelas internacionales (Stripe, PayPal) no son una solución viable en el contexto boliviano.
-* **`03_Analisis_Libelula.tex`**: Investigación sobre la empresa (PagosNet), los servicios que ofrece Libélula (QR Simple, Tarjetas, Tigo Money, etc.) y su modelo de negocio.
-* **`04_Arquitectura_API.tex`**: El núcleo técnico. Detalla los *endpoints* de la API, el flujo de autenticación, el proceso de registro de una transacción y (muy importante) el manejo de *webhooks* para confirmaciones de pago.
-* **`05_Propuesta_Integracion.tex`**: El "mapa" de cómo Libélula se conectaría a *nuestro* proyecto. Incluye cambios necesarios en el *backend*, *frontend* y modelo de base de datos.
-* **`06_Prueba_Concepto.tex`**: Muestra los resultados de las pruebas técnicas realizadas (ej. scripts que consumieron la API de *sandbox*, si aplica).
-* **`07_Analisis_Viabilidad.tex`**: Análisis de riesgos, dependencias y una estimación de esfuerzo (ej. *story points* o días-hombre) para la implementación real post-PoC.
-* **`08_Conclusion_Recomendacion.tex`**: Veredicto final. ¿Es Libélula la solución adecuada? ¿Se recomienda proceder con la integración en el sprint?
-* **`09_Apendices.tex`**: Información extra, como tablas de comisiones detalladas, flujos de error, etc.
+* **`00_Portada.tex`**: Genera la carátula principal del documento, incluyendo el logo de la universidad, el título del PoC, tu nombre y el del docente.
+
+* **`01_Introduccion.tex`**: Define el problema (la necesidad de una pasarela en Bolivia), el propósito, los objetivos técnicos y el alcance de esta Prueba de Concepto.
+
+* **`02_Vision_General_Libelula.tex`**: Describe qué es Libélula/Todotix SRL, su propuesta de valor (pasarela multicanal con QR, Tigo Money, etc.) y los casos de uso (pago inmediato vs. diferido).
+
+* **`03_Analisis_Recursos_Dev.tex`**: Es el núcleo técnico. Analiza la arquitectura de la API (paradigma de "Registro de Deuda"), los endpoints principales (/registrar, /consultar_pagos) y el mecanismo de autenticación (appkey).
+
+* **`04_Metodos_Pago.tex`**: Detalla y compara los métodos de pago que ofrece la pasarela (Tigo Money, Lula, BNB, Tarjeta y QR Simple).
+
+* **`05_Proceso_Integracion.tex`**: Explica el flujo de integración y los campos del formulario necesarios para el endpoint de "Registro de Deuda".
+
+* **`06_Consideraciones_Seguridad.tex`**: Evalúa los riesgos de la integración, incluyendo la seguridad de la appkey y la vulnerabilidad crítica del webhook PAGO EXITOSO (y su mitigación).
+
+* **`07_Analisis_Soporte_Costos.tex`**: (Tu sección 7) Realiza una comparativa de costos y modelo de negocio frente a pasarelas como Stripe, y evalúa la viabilidad económica, operativa y técnica.
+
+* **`08_Conclusiones.tex`**: (Tu sección 8) Presenta el veredicto final del PoC: viable para pagos directos (cliente a proveedor único), pero no óptimo para modelos de múltiples proveedores.
+
+
 
 #### `resources/`
 
 Este directorio almacena todos los archivos que *no* son texto LaTeX, pero que son necesarios para el documento.
 
-* **`images/`**: Contiene todos los recursos gráficos.
-    * `flujo_pago_qr.png`: Diagramas de secuencia o flujo de datos (creados en herramientas como diagrams.net o similares) que explican visualmente la interacción.
-    * `arquitectura_integracion.png`: Un diagrama que muestra cómo se conecta nuestro sistema con la API de Libélula.
-    * Logos y capturas de pantalla relevantes.
-* **`code/`**: Contiene *snippets* de código fuente que se insertan en el documento. Es una práctica más limpia que pegar código directamente en el `.tex`. Se usan con el paquete `listings` (`\lstinputlisting{...}`).
-* **`bib/`**: Contiene la base de datos bibliográfica (`.bib`).
-    * `referencias.bib`: Se usa para citar fuentes de manera profesional, principalmente la documentación oficial de la API de PagosNet/Libélula.
+* **`images/`**: Contiene todos los recursos gráficos, organizados por tipo:
+    * `Libelula`/: Logos oficiales de la pasarela de pagos.
+    * `Logos/`: Logos institucionales (ej. logoUMSS.png).
+    * `Mockups/`: Exportaciones de los diseños de Figma (ej. Formulario.png).
+    * `Pruebas/`: Capturas de pantalla de la demo funcional (ej. Metodo de pago qr.png).
 
+* **`bibliography/`**: Almacena toda la documentación de referencia utilizada para el PoC.
+    * `Ejemplo de Factura/`: Contiene un PDF de una factura de ejemplo (`factura_5fa65f...`).
+    * `Manual General/` y `Manuales de Integracion/`: Contienen los manuales técnicos oficiales de Libélula (v2.7.2Z01) que definen la API.
+    * `Mockup Formulario/`: Almacena el PDF del mockup del formulario.
+
+* **`code/`**: Contiene el código fuente de la demo funcional desarrollada para validar la integración.
+    * `Backend/`: El código del servidor (escrito en TypeScript) que se comunica de forma segura con la API de Libélula.
+        * `index.ts`: Punto de entrada del servidor.
+        * `libelula.ts`: Módulo que encapsula la lógica de conexión con la pasarela.
+        * `cardController.ts`, `cardRoutes.ts`, `cardService.ts`: Componentes (Controlador, Rutas, Servicio) para manejar la lógica de negocio del pago.
+    * `Frontend/`: El código de la interfaz de usuario (Next.js/React) que el cliente utiliza.
+        * `page.tsx`: La vista principal de la demo donde el usuario inicia el pago.
+        * `layout.tsx`: El layout principal de la aplicación.
+        * `globals.css`: Estilos CSS globales.
+        * `favicon.ico`: Icono de la pestaña del navegador.
+    
 ## Cómo Compilar
 
-Para generar el documento PDF, asegúrate de tener una distribución de LaTeX instalada (como TeX Live, MiKTeX o MacTeX).
+Para generar el documento PDF `(main.pdf)` en la carpeta` build/`, asegúrate de tener una distribución de LaTeX instalada (como MiKTeX o TeX Live).
 
-1.  Abre una terminal en el directorio raíz (`PoC_Libelula_Integration/`).
-2.  Ejecuta el compilador. `pdflatex` es el estándar.
+1.  Abre una terminal en el directorio raíz (`PoC_Libelula/`).
+2.  Ejecuta el siguiente comando:
 
     ```bash
-    pdflatex main.tex
+    latexmk -pdf -outdir=build main
     ```
 
-3.  Si tienes bibliografía (`.bib`) y citas, necesitarás ejecutar la secuencia completa para resolver las referencias:
+3.  Si necesitas forzar una recompilación desde cero (especialmente después de errores), limpia la carpeta `build` primero:
 
     ```bash
-    pdflatex main.tex
-    bibtex main
-    pdflatex main.tex
-    pdflatex main.tex
-    ```
-
-4.  **(Opcional) Usando el Makefile:**
-    Si tienes `make` instalado, simplemente ejecuta:
-
-    ```bash
+    # (En Windows CMD)
+    rmdir /s /q build
     latexmk -pdf -outdir=build main
     ```
