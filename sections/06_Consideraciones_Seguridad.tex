@@ -1,0 +1,69 @@
+\section{Consideraciones de Seguridad y Fiabilidad}
+    Un análisis de seguridad es fundamental para cualquier integración de pagos, ya que involucra tanto la protección 
+    de credenciales como la fiabilidad del proceso de confirmación de transacciones. A continuación, se detallan las 
+    consideraciones de seguridad basadas en el Manual de Integración v2.7.1.\par
+
+    \subsection{Autenticación de la API por \texttt{appkey}}
+        El mecanismo de autenticación para los servicios web de Libélula (como \texttt{REGISTRAR DEUDA} y \texttt{CONSULTAR PAGOS}) 
+        se basa en una clave de API estática.
+
+        \begin{itemize}
+            \item \textbf{Mecanismo:} Se utiliza un parámetro \texttt{appkey} (de tipo \texttt{STRING}) que debe ser enviado en todas las peticiones a la API.
+            \item \textbf{Generación:} Esta clave es generada por Libélula y es única para cada empresa afiliada.
+        \end{itemize}
+
+        \noindent
+        \textbf{Implicación de Seguridad (Crítica):} Dado que esta \texttt{appkey} es una credencial estática que otorga 
+        acceso total para registrar deudas y consultar pagos, debe ser tratada como un secreto de máxima prioridad. Es 
+        \textbf{imperativo} que esta clave resida \textbf{únicamente en el servidor de \emph{backend}} de nuestro proyecto. 
+        Nunca debe ser expuesta, compilada o almacenada en el código del \emph{frontend} (React/Next.js), ya que esto permitiría 
+        a un atacante suplantar nuestra identidad ante la API de Libélula.\par
+
+    \subsection{Seguridad en la Transmisión de Datos (HTTPS)}
+    La protección de los datos en tránsito es crucial, especialmente al enviar la \texttt{appkey} y la Información Personal 
+    Identificable (PII) del cliente.\par
+
+    \begin{itemize}
+        \item \textbf{Entorno de Producción:} Las URL de producción (ej. \texttt{https://api.todotix.com}) utilizan el protocolo \textbf{HTTPS}.Esto es un requisito estándar de la industria y garantiza que toda la comunicación entre nuestro \emph{backend} y la API de Libélula viaje cifrada, protegiendo tanto la \texttt{appkey} como los datos del cliente (nombre, email, NIT/CI).
+        \item \textbf{Entorno de Testing:} Las URL de pruebas (ej. \texttt{http://www.todotix.com:10888}) utilizan \textbf{HTTP}. Esto significa que, durante el desarrollo, la \texttt{appkey} de pruebas y los datos de prueba viajan en texto plano. Si bien esto no afecta la seguridad de la producción, es una mala práctica y expone las credenciales de prueba a riesgos de intercepción en redes no seguras (ej. Wi-Fi públicas).
+    \end{itemize}
+
+    \subsection{Fiabilidad y Verificación del Callback (\texttt{PAGO EXITOSO})}
+        Este es el punto de mayor riesgo identificado en la fiabilidad de la integración. El servicio \texttt{PAGO EXITOSO} 
+        es el \emph{webhook} (o \emph{callback}) que Libélula invoca para notificar a nuestro sistema que una deuda ha sido 
+        pagada.\par
+
+        \subsubsection{El Flujo del Webhook}
+            \begin{enumerate}
+                \item Nuestro sistema registra la deuda y proporciona una \texttt{callback\_url} (ej. \texttt{https://nuestro.sitio/api/webhook}).
+                \item Cuando el pago se completa (posiblemente horas después), Libélula realiza una llamada \texttt{HTTP GET} a esa URL.
+                \item En esta llamada, Libélula anexa el \texttt{transaction\_id} como un parámetro \emph{query string} (ej. \texttt{.../webhook?transaction\_id=...}) para que identifiquemos el pago.
+            \end{enumerate}
+
+        \subsubsection{Vulnerabilidad Identificada}
+            El Manual de Integración v2.7.1 \textbf{no especifica ningún mecanismo de seguridad para verificar la autenticidad} 
+            de la llamada \texttt{PAGO EXITOSO}. No se menciona el uso de:
+            \begin{itemize}
+                \item Una firma digital (como un \emph{header} \texttt{HMAC-SHA256}).
+                \item Un \emph{token} secreto compartido en la petición.
+                \item Una lista blanca de direcciones IP desde las cuales Libélula realizará las llamadas.
+            \end{itemize}
+
+            \noindent
+            \textbf{Riesgo (Crítico):} Sin un mecanismo de verificación, un actor malicioso podría adivinar o interceptar un 
+            \texttt{transaction\_id} válido y realizar una llamada \texttt{GET} falsa a nuestro \emph{endpoint} \texttt{PAGO 
+            EXITOSO}. Si nuestro sistema confía ciegamente en esta llamada, podríamos marcar una orden como Pagada sin haber 
+            recibido el dinero, resultando en fraude.\par
+
+        \subsubsection{Estrategia de Mitigación (Recomendación del PoC)}
+            Para mitigar esta vulnerabilidad, nuestro \emph{backend} \textbf{no debe confiar} en la llamada \texttt{PAGO EXITOSO} 
+            para confirmar el pago. En su lugar, debe usarla solo como una notificación para iniciar una verificación:
+
+            \begin{enumerate}
+                \item \textbf{Recepción:} Nuestro \emph{endpoint} \texttt{/api/webhook} recibe la llamada \texttt{GET} de Libélula y extrae el \texttt{transaction\_id}.
+                \item \textbf{Verificación (Servidor a Servidor):} Inmediatamente después, nuestro \emph{backend} debe iniciar su propia llamada \texttt{POST} autenticada (usando nuestra \texttt{appkey} secreta) al \emph{endpoint} \texttt{CONSULTA DE PAGOS} de Libélula.
+                \item \textbf{Conciliación:} Consultamos el estado de esa \texttt{transaction\_id} (o usamos el rango de fechas para encontrarla).
+                \item \textbf{Confirmación:} Solo si el servicio \texttt{CONSULTA DE PAGOS} (que sí está autenticado) nos confirma que la transacción está efectivamente pagada, procederemos a actualizar el estado del pedido en nuestra base de datos.
+            \end{enumerate}
+
+            Esta arquitectura de verificación (Webhook $\rightarrow$ Consulta $\rightarrow$ Confirmación) es la única forma robusta de garantizar la integridad de los pagos basándose en la documentación proporcionada.
