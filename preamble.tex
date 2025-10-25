@@ -1,40 +1,26 @@
-% Este archivo contiene toda la configuración, paquetes y estilos.
-
-% Opciones de documento y idioma
+% 1. CLASE DE DOCUMENTO E IDIOMA
 \documentclass[letterpaper, 12pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}  % Acentos y caracteres en UTF-8
+\usepackage[T1]{fontenc}     % Codificación de fuentes moderna
+\usepackage[spanish]{babel}  % Reglas de idioma español
+
+
+% 2. LAYOUT Y GEOMETRÍA
 \usepackage{geometry}
-
-% Paquetes de formato y tipografía
-\usepackage{amsmath}
-\usepackage{setspace}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{microtype} 
-
-% Paquetes para código y colores
-\usepackage{listings}
-\usepackage{xcolor}
-
-% Paquetes para navegación y cabeceras
-\usepackage{fancyhdr}
-\usepackage{hyperref}
-
-% Configuración de Geometría y Márgenes
 \geometry{margin=2.5cm, top=3.5cm}
 
-% Configuración de Cabeceras y Pies de Página (FancyHdr)
-\setlength{\headheight}{14.5pt}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{Ingeniería de Software}
-\fancyhead[R]{PoC Pasarela Libélula}
-\fancyfoot[C]{\thepage}
+
+% 3. PAQUETES DE TIPOGRAFÍA Y FORMATO
+\usepackage{amsmath}     % Fórmulas matemáticas avanzadas
+\usepackage{graphicx}    % Para incluir imágenes (.png, .jpg)
+\usepackage{booktabs}    % Tablas de calidad profesional (toprule, midrule)
+\usepackage{microtype}   % Mejoras tipográficas sutiles (justificación)
+\usepackage{setspace}    % Para control de interlineado (ej. \onehalfspacing)
+\usepackage{xcolor}      % Para definir y usar colores
 
 
-% Estilo para 'listings' (código)
+% 4. PAQUETES PARA CÓDIGO FUENTE
+\usepackage{listings}
 \lstdefinestyle{consola}{
   basicstyle=\ttfamily\footnotesize,
   backgroundcolor=\color{gray!5},
@@ -49,15 +35,35 @@
   aboveskip=1em, belowskip=1em,
 }
 
-% Configuración de Hyperref (para metadatos del PDF)
+
+% 5. CABECERAS Y PIES DE PÁGINA
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{PoC: Integración Libélula}
+\fancyhead[R]{Análisis de Viabilidad}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+\setlength{\headheight}{14.5pt}
+
+
+% 6. LINKS Y METADATOS DEL PDF
+\usepackage{hyperref}
 \hypersetup{
+    % Apariencia de links
     colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,      
-    urlcolor=cyan,
-    pdftitle={PoC Integración Pasarela Libélula},
+    linkcolor=blue,      % Enlaces internos (tabla de contenido)
+    filecolor=magenta,   % Enlaces a archivos locales
+    urlcolor=cyan,       % Enlaces web (URLs)
+    citecolor=green,     % Enlaces de bibliografía (citas)
+    % Metadatos del PDF
+    pdftitle={PoC: Integración de Pasarela de Pagos Libélula},
     pdfauthor={Diego Pardo},
-    pdfsubject={Análisis de Viabilidad Técnica},
-    pdfkeywords={Bolivia, Libelula, PagosNet, PoC, LaTeX},
-    bookmarksopen=true 
+    pdfsubject={Análisis Técnico de Integración},
+    pdfkeywords={PoC, Libélula, PagosNet, Pagos, Bolivia, LaTeX},
+    % Opciones de marcadores (Bookmarks) del PDF
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksnumbered=true
 }

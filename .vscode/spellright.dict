@@ -1,6 +1,7 @@
-poc
-gitignore
 Libelula
-json
 Makefile
-Hyperref
+gitignore
+json
+toprule
+midrule
+hyperref
