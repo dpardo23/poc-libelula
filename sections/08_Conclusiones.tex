@@ -1,14 +1,37 @@
-\section*{Conclusión}
+\section{Conclusión}
 
-El análisis realizado demuestra que, si bien el modelo de pagos de \textbf{Libélula} es económico, técnico y operativamente viable como pasarela para pagos directos de \textbf{cliente a proveedor único}, no resulta óptimo para modelos de negocio donde un cliente pueda realizar pagos a \textbf{múltiples proveedores diferentes} dentro de una misma operación. Su arquitectura está diseñada para flujos bilaterales, priorizando la simplicidad y la trazabilidad de cada transacción individual.
+    El análisis realizado demuestra que, si bien el modelo de pagos de \textbf{Libélula} es económico, técnico y 
+    operativamente viable como pasarela para pagos directos de \textbf{cliente a proveedor único}, no resulta óptimo para 
+    modelos de negocio donde un cliente pueda realizar pagos a \textbf{múltiples proveedores diferentes} dentro de una misma 
+    operación. Su arquitectura está diseñada para flujos bilaterales, priorizando la simplicidad y la trazabilidad de cada 
+    transacción individual.\par
 
-Desde una perspectiva \textbf{económica}, Libélula ofrece una estructura de costos más ligera que pasarelas tradicionales que manejan fondos de terceros o distribuyen montos entre varios destinatarios. Al eliminar la intermediación y la custodia temporal de fondos, se reducen significativamente los gastos asociados a auditorías de terceros, cumplimiento regulatorio y riesgos financieros. Esto permite ofrecer comisiones competitivas ---en el rango del 2.5\% por transacción--- sin comprometer la rentabilidad del sistema ni la cobertura de costos operativos esenciales como infraestructura, seguridad y soporte técnico. Sin embargo, la imposibilidad de gestionar pagos a múltiples proveedores limita su aplicabilidad en modelos donde un cliente realiza pagos fragmentados o a diversos beneficiarios.
+    Desde una perspectiva \textbf{económica}, Libélula ofrece una estructura de costos más ligera que pasarelas tradicionales 
+    que manejan fondos de terceros o distribuyen montos entre varios destinatarios. Al eliminar la intermediación y la 
+    custodia temporal de fondos, se reducen significativamente los gastos asociados a auditorías de terceros, cumplimiento 
+    regulatorio y riesgos financieros. Esto permite ofrecer comisiones competitivas ---en el rango del 2.5\% por transacción--- 
+    sin comprometer la rentabilidad del sistema ni la cobertura de costos operativos esenciales como infraestructura, 
+    seguridad y soporte técnico. Sin embargo, la imposibilidad de gestionar pagos a múltiples proveedores limita su 
+    aplicabilidad en modelos donde un cliente realiza pagos fragmentados o a diversos beneficiarios.\par
 
-En el ámbito \textbf{técnico}, Libélula presenta un modelo de integración sencillo y eficiente, sin necesidad de módulos de reparto de pagos ni \textit{wallets} internas complejas. Esto reduce la carga de mantenimiento, los puntos de falla y la dependencia de terceros, pero al mismo tiempo impide la implementación de carritos de compra con múltiples proveedores o pagos divididos. La inversión técnica necesaria para garantizar seguridad (cifrado, autenticación, cumplimiento de estándares PCI-DSS y monitoreo) sigue siendo justificable para transacciones uno a uno, pero no soporta flujos de pago más complejos sin modificaciones significativas.
+    En el ámbito \textbf{técnico}, Libélula presenta un modelo de integración sencillo y eficiente, sin necesidad de módulos 
+    de reparto de pagos ni \textit{wallets} internas complejas. Esto reduce la carga de mantenimiento, los puntos de falla y 
+    la dependencia de terceros, pero al mismo tiempo impide la implementación de carritos de compra con múltiples proveedores 
+    o pagos divididos. La inversión técnica necesaria para garantizar seguridad (cifrado, autenticación, cumplimiento de 
+    estándares PCI-DSS y monitoreo) sigue siendo justificable para transacciones uno a uno, pero no soporta flujos de pago 
+    más complejos sin modificaciones significativas.\par
 
-Desde el punto de vista \textbf{operativo}, la simplicidad del modelo proporciona rapidez y confiabilidad para pagos directos. Los fondos se acreditan casi de inmediato, se reducen los costos administrativos y se minimiza el tiempo de respuesta ante incidencias. No obstante, la falta de funcionalidad para gestionar múltiples proveedores en un solo pago representa una limitación importante para modelos de negocio donde esta característica es esencial.
+    Desde el punto de vista \textbf{operativo}, la simplicidad del modelo proporciona rapidez y confiabilidad para pagos 
+    directos. Los fondos se acreditan casi de inmediato, se reducen los costos administrativos y se minimiza el tiempo de 
+    respuesta ante incidencias. No obstante, la falta de funcionalidad para gestionar múltiples proveedores en un solo pago 
+    representa una limitación importante para modelos de negocio donde esta característica es esencial.\par
 
-Comparativamente, frente a competidores como \textbf{Stripe}, \textbf{MercadoPago} o \textbf{PayPal}, Libélula es más eficiente en costos y operación para transacciones uno a uno, pero carece de la flexibilidad necesaria para manejar pagos multiproveedor. Las soluciones tradicionales, aunque más costosas y complejas, permiten gestionar carritos de compra y pagos distribuidos, lo que las hace más adecuadas para modelos de negocio con múltiples beneficiarios.
+    Comparativamente, frente a competidores como \textbf{Stripe}, \textbf{MercadoPago} o \textbf{PayPal}, Libélula es más 
+    eficiente en costos y operación para transacciones uno a uno, pero carece de la flexibilidad necesaria para manejar 
+    pagos multiproveedor. Las soluciones tradicionales, aunque más costosas y complejas, permiten gestionar carritos de 
+    compra y pagos distribuidos, lo que las hace más adecuadas para modelos de negocio con múltiples beneficiarios.\par
 
-En síntesis, Libélula se posiciona como una pasarela de pagos \textbf{viable y competitiva} para transacciones directas entre un cliente y un proveedor, ofreciendo eficiencia tecnológica, transparencia y costos optimizados. Sin embargo, no es recomendable como solución principal para modelos de negocio donde un cliente deba pagar a múltiples proveedores, ya que su diseño no soporta la distribución simultánea de fondos ni la gestión de pagos complejos.
-
+    En síntesis, Libélula se posiciona como una pasarela de pagos \textbf{viable y competitiva} para transacciones directas 
+    entre un cliente y un proveedor, ofreciendo eficiencia tecnológica, transparencia y costos optimizados. Sin embargo, no 
+    es recomendable como solución principal para modelos de negocio donde un cliente deba pagar a múltiples proveedores, ya 
+    que su diseño no soporta la distribución simultánea de fondos ni la gestión de pagos complejos.\par
