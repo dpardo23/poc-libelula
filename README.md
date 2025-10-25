@@ -1,7 +1,4 @@
 # poc-libelula
-
-![alt text](resources/images/Libelula/LogoPagosTT.png)
-
 # Prueba de Concepto (PoC): Integración de Pasarela de Pagos Libélula (PagosNet)
 Este repositorio contiene el documento LaTeX para una Prueba de Concepto (PoC) que analiza la viabilidad de integrar la pasarela de pagos boliviana "Libélula" (de PagosNet) en nuestro proyecto de software.
 
