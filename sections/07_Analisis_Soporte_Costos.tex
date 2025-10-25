@@ -1,56 +1,62 @@
-\section{Descripción general}
+\section{Análisis de Soporte y Costos}
     \noindent
-		Libélula es una pasarela de pagos diseñada para facilitar \textbf{transacciones directas entre clientes y proveedores}, sin 
-		funcionar como un tercero que retiene o distribuye fondos. Su arquitectura prioriza la \textbf{simplicidad operativa}, 
-		la \textbf{seguridad} y la \textbf{transparencia contable}, permitiendo que el dinero pase directamente del pagador al 
-		receptor, con registro y trazabilidad total.\par
-    
-\section{Modelo de operación}
-    \noindent
-		El modelo operativo de Libélula se basa en los siguientes principios:
-		\begin{itemize}
-			\item \textbf{Relación directa:} Cliente $\rightarrow$ Proveedor (sin intermediarios financieros).
-			\item \textbf{Registro de pagos:} Cada transacción se almacena como un pago único, verificable y auditable.
-			\item \textbf{Comisión por servicio:} Libélula aplica una comisión porcentual sobre cada transacción procesada, destinada a cubrir infraestructura, seguridad y soporte técnico.
-		\end{itemize}    
-    Este enfoque evita los costos de custodia y distribución de fondos que manejan las pasarelas multilaterales (como Stripe 
-	o MercadoPago), lo que mejora la eficiencia operativa y reduce los riesgos financieros.\par
+    Para evaluar la viabilidad de integrar Libélula como pasarela de pagos en nuestro proyecto, es esencial analizar 
+    tanto el soporte técnico ofrecido por Libélula como los costos asociados a su uso. A continuación, se presenta un 
+    resumen de estos aspectos clave.\par
 
-\section{Comparativa con otras pasarelas}
-    
-    \begin{center}
-        \begin{tabular}{>{\raggedright}p{4cm} p{5cm} p{5cm}}
-            \toprule
-            \textbf{Característica} & \textbf{Libélula} & \textbf{Stripe / MercadoPago} \\
-            \midrule
-            Tipo de flujo & Directo (Cliente $\rightarrow$ Proveedor) & Intermediado (Cliente $\rightarrow$ Pasarela $\rightarrow$ Proveedor) \\
-            Comisión promedio & 2.5\% & 3.5\% -- 5\% \\
-            Tiempo de liquidación & Inmediato o 24 horas & 1--5 días hábiles \\
-            Custodia de fondos & No aplica & Sí (retención temporal) \\
-            Transparencia contable & Alta & Media \\
-            Complejidad técnica & Baja (API simplificada) & Media / Alta \\
-            Costo operativo interno & Bajo & Alto (múltiples actores) \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-    
-\section{Evaluación de viabilidad}
+  \subsection{Descripción general}
+      \noindent
+      Libélula es una pasarela de pagos diseñada para facilitar \textbf{transacciones directas entre clientes y proveedores}, sin 
+      funcionar como un tercero que retiene o distribuye fondos. Su arquitectura prioriza la \textbf{simplicidad operativa}, 
+      la \textbf{seguridad} y la \textbf{transparencia contable}, permitiendo que el dinero pase directamente del pagador al 
+      receptor, con registro y trazabilidad total.\par
+      
+  \subsection{Modelo de operación}
+      \noindent
+      El modelo operativo de Libélula se basa en los siguientes principios:
+      \begin{itemize}
+        \item \textbf{Relación directa:} Cliente $\rightarrow$ Proveedor (sin intermediarios financieros).
+        \item \textbf{Registro de pagos:} Cada transacción se almacena como un pago único, verificable y auditable.
+        \item \textbf{Comisión por servicio:} Libélula aplica una comisión porcentual sobre cada transacción procesada, destinada a cubrir infraestructura, seguridad y soporte técnico.
+      \end{itemize}    
+      Este enfoque evita los costos de custodia y distribución de fondos que manejan las pasarelas multilaterales (como Stripe 
+    o MercadoPago), lo que mejora la eficiencia operativa y reduce los riesgos financieros.\par
 
-    \subsection{Económica}
-		El modelo de Libélula es viable con una comisión del 2.5\% por transacción, siempre que el volumen mensual supere el 
-		umbral de sostenibilidad (por ejemplo, 2,000 transacciones mensuales). A menores volúmenes, el costo fijo tiene un mayor 
-		impacto, pero sigue siendo competitivo frente a las comisiones de los principales competidores.\par
-    
-    \subsection{Operativa}
-    	El flujo directo simplifica la conciliación y reduce errores contables. La ausencia de custodia de fondos minimiza 
-		riesgos regulatorios y financieros, al tiempo que mejora la velocidad de liquidación.\par
-    
-    \subsection{Técnica}
-    	La infraestructura requerida es escalable y puede implementarse sobre servicios en la nube (AWS, DigitalOcean, etc.), 
-		sin necesidad de módulos complejos de reparto de pagos. Esto reduce los costos de mantenimiento y facilita la 
-		adopción tecnológica.\par
-    
-    \subsection{Competitiva}
-    	Libélula ofrece menores comisiones, tiempos de pago más rápidos y una integración más ligera. Su principal 
-		limitación ---la falta de soporte para pagos multiproveedor--- se compensa con una mayor eficiencia y menor costo 
-		operativo.\par
+  \subsection{Comparativa con otras pasarelas}
+      
+      \begin{center}
+          \begin{tabular}{>{\raggedright}p{4cm} p{5cm} p{5cm}}
+              \toprule
+              \textbf{Característica} & \textbf{Libélula} & \textbf{Stripe / MercadoPago} \\
+              \midrule
+              Tipo de flujo & Directo (Cliente $\rightarrow$ Proveedor) & Intermediado (Cliente $\rightarrow$ Pasarela $\rightarrow$ Proveedor) \\
+              Comisión promedio & 2.5\% & 3.5\% -- 5\% \\
+              Tiempo de liquidación & Inmediato o 24 horas & 1--5 días hábiles \\
+              Custodia de fondos & No aplica & Sí (retención temporal) \\
+              Transparencia contable & Alta & Media \\
+              Complejidad técnica & Baja (API simplificada) & Media / Alta \\
+              Costo operativo interno & Bajo & Alto (múltiples actores) \\
+              \bottomrule
+          \end{tabular}
+      \end{center}
+      
+  \subsection{Evaluación de viabilidad}
+
+      \subsubsection{Económica}
+      El modelo de Libélula es viable con una comisión del 2.5\% por transacción, siempre que el volumen mensual supere el 
+      umbral de sostenibilidad (por ejemplo, 2,000 transacciones mensuales). A menores volúmenes, el costo fijo tiene un mayor 
+      impacto, pero sigue siendo competitivo frente a las comisiones de los principales competidores.\par
+      
+      \subsubsection{Operativa}
+        El flujo directo simplifica la conciliación y reduce errores contables. La ausencia de custodia de fondos minimiza 
+      riesgos regulatorios y financieros, al tiempo que mejora la velocidad de liquidación.\par
+      
+      \subsubsection{Técnica}
+        La infraestructura requerida es escalable y puede implementarse sobre servicios en la nube (AWS, DigitalOcean, etc.), 
+      sin necesidad de módulos complejos de reparto de pagos. Esto reduce los costos de mantenimiento y facilita la 
+      adopción tecnológica.\par
+      
+      \subsubsection{Competitiva}
+        Libélula ofrece menores comisiones, tiempos de pago más rápidos y una integración más ligera. Su principal 
+      limitación ---la falta de soporte para pagos multiproveedor--- se compensa con una mayor eficiencia y menor costo 
+      operativo.\par
