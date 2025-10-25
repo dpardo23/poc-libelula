@@ -112,5 +112,5 @@ Para generar el documento PDF, asegúrate de tener una distribución de LaTeX in
     Si tienes `make` instalado, simplemente ejecuta:
 
     ```bash
-    make pdf
+    latexmk -pdf -outdir=build main
     ```
