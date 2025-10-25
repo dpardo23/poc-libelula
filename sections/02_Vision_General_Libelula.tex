@@ -1,0 +1,52 @@
+\section{Visión General de Libélula como Plataforma de Pagos}
+
+    \subsection{Descripción de la Empresa y Posicionamiento en el Mercado Boliviano}
+        Libélula se define como una pasarela de pagos online orientada al cobro de cuentas. Es una solución tecnológica perteneciente 
+        a la empresa boliviana \textbf{Todotix SRL}. Su modelo de negocio está enfocado en el segmento B2B (Business-to-Business), 
+        proveyendo a las empresas una plataforma centralizada para que estas puedan gestionar y recibir pagos de sus clientes finales.\par
+
+        El posicionamiento estratégico de Libélula en el mercado boliviano radica en su enfoque local, ofreciendo una integración 
+        directa con los métodos de pago de mayor uso y confianza en el país, los cuales a menudo no están disponibles en pasarelas 
+        internacionales.\par
+
+        El paradigma técnico fundamental de la API de Libélula se basa en el concepto de \emph{registro de deuda} (\texttt{REGISTRAR DEUDA}). 
+        A diferencia de otras pasarelas que crean "intentos de pago" inmediatos, el flujo estándar de Libélula consiste en:\par
+
+        \begin{enumerate}
+            \item La empresa (nuestro \emph{backend}) notifica a la API de Libélula sobre una nueva deuda pendiente mediante una llamada \texttt{POST} al servicio web \texttt{/rest/deuda/registrar}.
+            \item En esta llamada se envían todos los detalles de la transacción, incluyendo parámetros críticos como \texttt{appkey}, \texttt{identificador\_deuda}, \texttt{email\_cliente} y \texttt{lineas\_detalle\_deuda}.
+            \item Si el registro es exitoso, Libélula responde con un JSON que contiene el parámetro \texttt{url\_pasarela\_pagos}.
+            \item La empresa debe entonces redirigir al cliente final a esta URL, donde se le presentarán las opciones de pago (QR, Tarjeta, etc.) para saldar dicha deuda.
+            \item Una vez que el pago es confirmado por el canal (ej. el banco), Libélula notifica a la empresa invocando el servicio \texttt{PAGO EXITOSO}, que debe estar implementado en nuestro \emph{backend} (la URL especificada en el parámetro \texttt{callback\_url} durante el registro), anexando el \texttt{transaction\_id} para la conciliación.
+        \end{enumerate}
+
+    \subsection{Propuesta de Valor: La Pasarela Multicanal}
+        La principal propuesta de valor de Libélula es su capacidad para actuar como un \emph{hub} o agregador de múltiples canales 
+        de pago bolivianos. Según el manual de integración, la plataforma unifica el acceso a los siguientes servicios:\par
+
+            \begin{itemize}
+                \item \textbf{Tarjetas de Débito y Crédito:} Integración con Cybersource Visa de ATC.
+                \item \textbf{SimpleQR:} El estándar de pagos QR interoperable de Bolivia (en este caso, operado vía BCP).
+                \item \textbf{Botón de Pagos:} Integración con la plataforma web del BCP.
+                \item \textbf{Billetera Móvil:} Pagos a través de Tigo Money.
+                \item \textbf{Banca por Internet:} Integración directa con la plataforma BNBNet del Banco Nacional de Bolivia.
+            \end{itemize}
+
+        Una ventaja estratégica clave, mencionada en la documentación, es que esta arquitectura permite a Libélula acoplar nuevos canales 
+        de pago en el futuro de forma automática, sin implicar cambios o esfuerzos de desarrollo adicionales por parte de las empresas 
+        ya integradas.\par
+
+    \subsection{Identificación de Clientes y Casos de Uso Típicos}
+        La plataforma está diseñada para cualquier empresa en Bolivia que necesite un mecanismo digital para el cobro de cuentas. 
+        Los casos de uso técnicos se derivan directamente de los tipos de canales que ofrece:\par
+
+        \begin{enumerate}
+            \item \textbf{Caso de Uso 1: Pago Inmediato (E-commerce):} El cliente es redirigido a la \texttt{url\_pasarela\_pagos} y 
+            paga en ese instante (ej. con tarjeta de crédito). Tras el pago, Libélula lo redirige de vuelta al sitio de la empresa 
+            (usando el parámetro \texttt{url\_retorno}) y, simultáneamente, envía la confirmación al \emph{backend} (\texttt{callback\_url}).
+            \item \textbf{Caso de Uso 2: Pago Diferido (Asíncrono):} Este es el escenario más relevante para SimpleQR o pagos bancarios. 
+            El cliente genera la deuda, obtiene los datos (ej. ve el QR desde la \texttt{url\_pasarela\_pagos} o la \texttt{qr\_simple\_url}), 
+            pero puede cerrar el navegador y realizar el pago horas después desde su aplicación bancaria. La documentación contempla este 
+            escenario bajo el servicio \texttt{PAGO EXITOSO EN BACKGROUND}, indicando que la confirmación (el \emph{webhook}) se ejecutará 
+            en segundo plano en el momento en que el banco notifique a Libélula, lo cual puede no ser inmediato.
+        \end{enumerate}
