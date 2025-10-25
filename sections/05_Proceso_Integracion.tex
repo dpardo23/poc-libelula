@@ -1,0 +1,49 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+\begin{document}
+		
+\section*{Integración de Libélula: Formulario de registro de deuda}
+
+Libélula permite registrar una deuda o pago enviando un formulario con información del cliente, del proveedor y del ítem a cobrar. Este registro es necesario antes de que el cliente pueda realizar el pago.
+
+\subsection*{Campos del formulario}
+
+\begin{center}
+	\begin{tabular}{>{\raggedright}p{4cm} p{6cm} p{4cm}}
+		\toprule
+		\textbf{Campo} & \textbf{Descripción} & \textbf{Ejemplo} \\
+		\midrule
+		identificador\_deuda & Identificador único de la deuda o transacción del proveedor & 0001 \\
+		nit & Número de Identificación Tributaria del proveedor & 123456789 \\
+		descripcion & Descripción general de la deuda o servicio & Pago por suscripción mensual \\
+		descripcion\_envio & Información adicional sobre envío o servicio adicional & Envío gratuito \\
+		concepto & Nombre o descripción del ítem de la deuda & Suscripción mensual \\
+		email\_cliente & Correo electrónico del cliente que realizará el pago & cliente@ejemplo.com \\
+		nombre\_cliente & Nombre del cliente & Juan \\
+		apellido\_cliente & Apellido del cliente & Pérez \\
+		CI & Carnet de identidad o documento de identificación del cliente & 12345678 \\
+		Costo\_Unitario & Precio unitario del ítem a cobrar, en la moneda definida & 150 BOB \\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+\subsection*{Flujo de integración}
+
+\begin{enumerate}
+	\item Registro de deuda: El proveedor envía el formulario con los datos del cliente y del ítem a cobrar.
+	\item Validación: Libélula valida los datos y genera un registro de deuda único.
+	\item Pago: El cliente puede pagar usando cualquier método disponible (Tigo Money, Lula, BNB, tarjeta o QR).
+	\item Confirmación: La pasarela actualiza el estado de la deuda y, si aplica, genera factura electrónica y redirige a una pagina designada.
+\end{enumerate}
+
+	
+\end{document}
