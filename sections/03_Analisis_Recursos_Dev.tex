@@ -1,0 +1,111 @@
+\section{Análisis de Recursos para Desarrolladores}
+    La viabilidad de una integración de software depende directamente de la calidad, accesibilidad y claridad de sus recursos 
+    técnicos. Esta sección evalúa los materiales proporcionados por Libélula (Todotix SRL) para guiar el proceso de desarrollo.\par
+
+    \subsection{Acceso a la Documentación Técnica}
+        \subsubsection{El Manual de Integración como Documento Canónico}
+            El recurso principal y canónico para esta Prueba de Concepto es el documento GUÍA DE INTEGRACIÓN PARA EMPRESAS
+            (Versión 2.7.1, septiembre 2020). Este manual en formato PDF detalla los \emph{endpoints} de la API, 
+            los parámetros requeridos y los flujos de comunicación.\par      
+            
+            La documentación está estructurada como una guía lineal que describe los tres procesos principales de la API:\par
+        \begin{enumerate}
+            \item \texttt{REGISTRAR DEUDA}
+            \item \texttt{PAGO EXITOSO} (el \emph{callback} o \emph{webhook})
+            \item \texttt{CONSULTA DE PAGOS} (para conciliación)
+        \end{enumerate}
+            Incluye tablas detalladas de parámetros de entrada y salida para cada servicio, así como ejemplos de peticiones en 
+            formato JSON y capturas de pantalla de la herramienta POSTMAN.\par
+
+        \subsubsection{Ausencia de un Portal de Desarrollador Interactivo}
+            Un punto notable del ecosistema de Libélula es la aparente ausencia de un portal de desarrollador interactivo (como 
+            los que ofrecen Stripe, PayPal o otras pasarelas globales). La documentación no hace referencia a un sitio web donde 
+            los desarrolladores puedan registrarse por sí mismos para obtener credenciales de \emph{sandbox}, probar llamadas a 
+            la API en tiempo real o consultar un catálogo de errores interactivo.\par
+
+            El acceso al entorno de pruebas (\texttt{Testing}) parece estar gestionado directamente por el equipo de Libélula/Todotix, 
+            quienes proveen el \texttt{appkey} y la URL del \emph{endpoint} de pruebas (\texttt{http://www.todotix.com:10888}). Esto 
+            sugiere un modelo de \emph{onboarding} más tradicional, gestionado comercialmente, en lugar de un modelo de auto-servicio 
+            (self-service).\par
+
+    \subsection{Arquitectura de la API}
+        \subsubsection{Modelo RESTful y Paradigma de Registro de Deuda}
+            La API de Libélula se presenta como un servicio web basado en REST sobre HTTP. Las interacciones se realizan 
+            mediante llamadas \texttt{POST} y \texttt{GET} a \emph{endpoints} específicos.\par
+            El paradigma central de la plataforma no es la creación de un pago, sino el \textbf{"registro de una deuda"}. Este es un 
+            concepto fundamental:\par
+            \begin{enumerate}
+                \item Nuestro sistema no le pide a Libélula que cobre X monto.
+                \item Nuestro sistema le informa a Libélula que existe una deuda por X monto, identificada con un \texttt{identificador\_deuda} único de nuestro lado.
+                \item Libélula registra esta deuda en su plataforma y genera una URL de pago (\texttt{url\_pasarela\_pagos}).
+                \item El pago se considera una acción posterior que cancela dicha deuda registrada.
+            \end{enumerate}
+        Este modelo es robusto para manejar pagos asíncronos (como QR o depósitos bancarios), donde el pago no es inmediato.\par
+
+    \subsubsection{Endpoints Principales Identificados}
+        El manual detalla tres servicios web principales que componen el ciclo de vida completo de una transacción:\par
+
+        \begin{enumerate}
+            \item \textbf{Servicio 1: \texttt{REGISTRAR DEUDA}}
+            \begin{itemize}
+                \item \textbf{Método:} \texttt{POST} 
+                \item \textbf{Endpoint (Testing):} \texttt{http://www.todotix.com:10888/rest/deuda/registrar}
+                \item \textbf{Endpoint (Producción):} \texttt{https://api.todotix.com/rest/deuda/registrar}
+                \item \textbf{Función:} Es el \emph{endpoint} más importante. Se utiliza para notificar a Libélula sobre una nueva transacción. Recibe un cuerpo de datos (la documentación sugiere \texttt{x-www-form-urlencoded} o \texttt{raw} JSON), con toda la información del cliente, los detalles de la compra (\texttt{lineas\_detalle\_deuda}), y las URLs de retorno.
+                \item \textbf{Respuesta Exitosa:} Devuelve un JSON con \texttt{error: 0}, un \texttt{id\_transaccion} (el identificador único de Libélula) , y la \texttt{url\_pasarela\_pagos} a la cual debemos redirigir al cliente.
+            \end{itemize}
+
+            \item \textbf{Servicio 2: \texttt{PAGO EXITOSO} (Webhook)}
+            \begin{itemize}
+                \item \textbf{Método:} \texttt{GET} 
+                \item \textbf{Endpoint:} Implementado por \textbf{nuestro} sistema. La URL se proporciona a Libélula en el parámetro \texttt{callback\_url} de la llamada de registro.
+                \item \textbf{Función:} Este es el mecanismo de confirmación asíncrono (webhook). Libélula invoca este \emph{endpoint} cuando el pago se ha completado con éxito.
+                \item \textbf{Parámetros (QueryString):} Libélula anexa el \texttt{transaction\_id} a la URL, permitiéndonos identificar qué deuda fue pagada. También puede incluir \texttt{invoice\_id} e \texttt{invoice\_url} si se solicitó facturación.
+                \item \textbf{Modo Background:} La documentación especifica que para pagos diferidos (como banca por internet), esta llamada se ejecutará en segundo plano (\texttt{PAGO EXITOSO EN BACKGROUND}) cuando se reciba la confirmación, lo cual puede tardar horas.
+            \end{itemize}
+
+            \item \textbf{Servicio 3: \texttt{CONSULTA DE PAGOS} (Conciliación)}
+            \begin{itemize}
+                \item \textbf{Método:} \texttt{POST} o \texttt{GET}
+                \item \textbf{Endpoint (Testing):} \texttt{http://www.todotix.com:10888/rest/deuda/consultar\_pagos}
+                \item \textbf{Función:} Es un servicio de conciliación. Permite a nuestro sistema consultar todos los pagos exitosos recibidos en un rango de fechas (\texttt{fecha\_inicial}, \texttt{fecha\_final}).
+                \item \textbf{Respuesta:} Devuelve un JSON con un \emph{array} de \texttt{datos}, que contiene una lista de todas las transacciones pagadas en ese rango, con sus detalles completos (monto, forma de pago, datos del cliente, etc.).
+            \end{itemize}
+        \end{enumerate}
+
+    \subsection{Sistema de Autenticación y Seguridad}
+
+        \subsubsection{Mecanismo de Autenticación por \texttt{appkey}}
+            La autenticación con la API de Libélula no utiliza protocolos modernos como OAuth 2.0. En su lugar, emplea un mecanismo 
+            de clave de API estática (API Key).
+            El parámetro \texttt{appkey} es \textbf{requerido} en todas las llamadas a los servicios de Libélula (tanto para 
+            registrar deudas como para consultar pagos).
+            Esta \texttt{appkey} es un \texttt{STRING} único generado por Libélula para cada empresa afiliada. Dado que esta clave 
+            otorga acceso total a la API, es \textbf{imperativo} que se mantenga secreta y solo sea utilizada desde nuestro 
+            \emph{backend}. \textbf{Nunca debe ser expuesta en el código del \emph{frontend} (cliente)}.\par
+
+        \subsubsection{Entornos de Pruebas (Testing) y Producción}
+            La documentación diferencia claramente dos entornos operativos, cada uno con sus propios \emph{endpoints}:\par
+
+    \begin{itemize}
+        \item \textbf{Entorno de Testing:}
+        \begin{itemize}
+            \item \textbf{URL Base:} \texttt{http://www.todotix.com:10888}
+            \item Se asume que este entorno utiliza un \texttt{appkey} de pruebas específico y no procesa transacciones 
+            monetarias reales.
+        \end{itemize}
+        \item \textbf{Entorno de Producción:}
+        \begin{itemize}
+            \item \textbf{URL Base:} \texttt{https://api.todotix.com}
+            \item Este es el entorno para transacciones reales y utilizará el \texttt{appkey} de producción final.
+        \end{itemize}
+    \end{itemize}
+    Esta separación es una práctica estándar de la industria y es adecuada para nuestro ciclo de desarrollo 
+    (Desarrollo -> Pruebas -> Producción).\par
+
+    \subsubsection{Protocolos de Seguridad en la Transmisión}
+    El manual de integración revela una diferencia clave en la seguridad de la transmisión entre los dos entornos:
+    \begin{itemize}
+        \item El entorno de \textbf{Producción} utiliza \textbf{HTTPS} (\texttt{https://api.todotix.com}). Esto es un requisito de seguridad fundamental, ya que garantiza que todos los datos (incluyendo el \texttt{appkey} y los datos del cliente) viajen cifrados entre nuestro servidor y el de Libélula.
+        \item El entorno de \textbf{Testing}, sin embargo, utiliza \textbf{HTTP} (\texttt{http://www.todotix.com:10888}). Si bien esto es común en entornos de prueba antiguos para simplificar la configuración, significa que las llamadas de prueba (incluyendo el \texttt{appkey} de \emph{testing}) viajan como texto plano. Esto no representa un riesgo para la producción, pero es una consideración de seguridad a tener en cuenta durante el desarrollo..
+    \end{itemize}
